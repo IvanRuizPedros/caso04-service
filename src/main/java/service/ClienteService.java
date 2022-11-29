@@ -28,6 +28,7 @@ public class ClienteService {
 	// Comprobar si existe (username) con findByUserName
 	// Si existe, comprueba password.
 	// Sino, abortar (exception)
+	// También se podría añadir: si contraseña caducada, abortar (excepcion).
 	public void loginCliente(String username, String password) {
 
 	};
