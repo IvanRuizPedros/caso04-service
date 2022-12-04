@@ -20,9 +20,10 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 	final String SQLSELECTALL = "SELECT * FROM " + TABLA;
 	final String SQLSELECTCOUNT = "SELECT count(*) FROM " + TABLA;
 	final String SQLSELECTPK = "SELECT * FROM " + TABLA + " WHERE " + PK + " = ?";
+	final String SQLSELECTUSER = "SELECT * FROM " + TABLA + " WHERE username = ?";
 	final String SQLSELECTEXAMPLE = "SELECT * FROM " + TABLA + " where nombre like ? and direccion like ?";
-	final String SQLINSERT = "INSERT INTO " + TABLA + " (nombre, direccion) VALUES (?, ?)";
-	final String SQLUPDATE = "UPDATE " + TABLA + " SET nombre = ?, direccion = ? WHERE " + PK + " = ?";
+	final String SQLINSERT = "INSERT INTO " + TABLA + " (nombre, direccion, username, passwd) VALUES (?, ?, ?, ?)";
+	final String SQLUPDATE = "UPDATE " + TABLA + " SET nombre = ?, direccion = ?, username = ?, passwd = ? WHERE " + PK + " = ?";
 	final String SQLDELETE = "DELETE FROM " + TABLA + " WHERE " + PK + " = ?";
 	private final PreparedStatement pstSelectPK;
 	private final PreparedStatement pstSelectAll;
@@ -31,10 +32,12 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 	private final PreparedStatement pstInsert;
 	private final PreparedStatement pstUpdate;
 	private final PreparedStatement pstDelete;
+	private final PreparedStatement pstSelectUserName;
 
 	public ClienteDAO() throws SQLException {
 		Connection con = ConexionBD.getConexion();
 		pstSelectPK = con.prepareStatement(SQLSELECTPK);
+		pstSelectUserName = con.prepareStatement(SQLSELECTUSER);
 		pstSelectCount = con.prepareStatement(SQLSELECTCOUNT);
 		pstSelectAll = con.prepareStatement(SQLSELECTALL);
 		pstSelectExample = con.prepareStatement(SQLSELECTEXAMPLE);
@@ -45,6 +48,7 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 
 	public void cerrar() throws SQLException {
 		pstSelectPK.close();
+		pstSelectUserName.close();
 		pstSelectAll.close();
 		pstSelectCount.close();
 		pstSelectExample.close();
@@ -53,8 +57,8 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 		pstDelete.close();
 	}
 
-	private Cliente build(int id, String nombre, String direccion) {
-		return new Cliente(id, nombre, direccion);
+	private Cliente build(int id, String nombre, String direccion, String username, String passwd) {
+		return new Cliente(id, nombre, direccion, username, passwd);
 	}
 
 	public Cliente find(int id) {
@@ -63,7 +67,23 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 			pstSelectPK.setInt(1, id);
 			ResultSet rs = pstSelectPK.executeQuery();
 			if (rs.next()) {
-				c = build(id, rs.getString("nombre"), rs.getString("direccion"));
+				c = build(id, rs.getString("nombre"), rs.getString("direccion"), rs.getString("username"), rs.getString("passwd"));
+			}
+			rs.close();
+			return c;
+		} catch (SQLException e) {
+			return null;
+		}
+
+	}
+	
+	public Cliente findByUserName(String username) {
+		Cliente c = null;
+		try {
+			pstSelectUserName.setString(1, username);
+			ResultSet rs = pstSelectUserName.executeQuery();
+			if (rs.next()) {
+				c = build(rs.getInt("id"), rs.getString("nombre"), rs.getString("direccion"), username, rs.getString("passwd"));
 			}
 			rs.close();
 			return c;
@@ -79,7 +99,7 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 		try {
 			rs = pstSelectAll.executeQuery();
 			while (rs.next()) {
-				listaClientes.add(build(rs.getInt("id"), rs.getString("nombre"), rs.getString("direccion")));
+				listaClientes.add(build(rs.getInt("id"), rs.getString("nombre"), rs.getString("direccion"), rs.getString("username"), rs.getString("passwd")));
 			}
 			rs.close();
 			return listaClientes;
@@ -93,6 +113,8 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 		try {
 			pstInsert.setString(1, cliInsertar.getNombre());
 			pstInsert.setString(2, cliInsertar.getDireccion());
+			pstInsert.setString(3, cliInsertar.getUsername());
+			pstInsert.setString(4, cliInsertar.getPasswd());
 			int insertados = pstInsert.executeUpdate();
 			if (insertados == 1) {
 				ResultSet rsClave = pstInsert.getGeneratedKeys();
@@ -111,7 +133,9 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 		try {
 			pstUpdate.setString(1, cliActualizar.getNombre());
 			pstUpdate.setString(2, cliActualizar.getDireccion());
-			pstUpdate.setInt(3, cliActualizar.getId());
+			pstUpdate.setString(3, cliActualizar.getUsername());
+			pstUpdate.setString(4, cliActualizar.getPasswd());
+			pstUpdate.setInt(5, cliActualizar.getId());
 			int actualizados = pstUpdate.executeUpdate();
 			return (actualizados == 1);
 		} catch (SQLException e) {
@@ -171,7 +195,7 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 			pstSelectExample.setString(2, filtroDireccion);
 			ResultSet rs = pstSelectExample.executeQuery();
 			while (rs.next()) {
-				listaClientes.add(build(rs.getInt("id"), rs.getString("nombre"), rs.getString("direccion")));
+				listaClientes.add(build(rs.getInt("id"), rs.getString("nombre"), rs.getString("direccion"), rs.getString("username"), rs.getString("passwd")));
 			}
 			rs.close();
 			return listaClientes;
@@ -179,5 +203,7 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 			return listaClientes;
 		}
 	}
+
+	
 
 }

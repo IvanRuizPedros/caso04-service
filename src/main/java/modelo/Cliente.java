@@ -4,6 +4,8 @@ public class Cliente {
 	private int id;
 	private String nombre;
 	private String direccion;
+	private String username;
+	private String passwd;
 
 	public Cliente() {
 	}
@@ -13,10 +15,25 @@ public class Cliente {
 		this.direccion = direccion;
 	}
 
+	public Cliente(String nombre, String direccion, String username, String passwd) {
+		this.nombre = nombre;
+		this.direccion = direccion;
+		this.username = username;
+		this.passwd = passwd;
+	}
+
 	public Cliente(int id, String nombre, String direccion) {
 		this.id = id;
 		this.nombre = nombre;
 		this.direccion = direccion;
+	}
+
+	public Cliente(int id, String nombre, String direccion, String username, String passwd) {
+		this.id = id;
+		this.nombre = nombre;
+		this.direccion = direccion;
+		this.username = username;
+		this.passwd = passwd;
 	}
 
 	public int getId() {
@@ -43,9 +60,26 @@ public class Cliente {
 		this.direccion = direccion;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPasswd() {
+		return passwd;
+	}
+
+	public void setPasswd(String passwd) {
+		this.passwd = passwd;
+	}
+
 	@Override
 	public String toString() {
-		return "Cliente [id=" + id + ", nombre=" + nombre + ", direccion=" + direccion + "]";
-	}	
-		
+		return "Cliente [id=" + id + ", nombre=" + nombre + ", direccion=" + direccion + ", username=" + username
+				+ ", passwd=" + passwd + "]";
+	}
+
 }
