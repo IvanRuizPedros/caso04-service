@@ -5,7 +5,7 @@ public class Cliente {
 	private String nombre;
 	private String direccion;
 	private String username;
-	private String passwd;
+	private String password;
 
 	public Cliente() {
 	}
@@ -15,11 +15,11 @@ public class Cliente {
 		this.direccion = direccion;
 	}
 
-	public Cliente(String nombre, String direccion, String username, String passwd) {
+	public Cliente(String nombre, String direccion, String username, String password) {
 		this.nombre = nombre;
 		this.direccion = direccion;
 		this.username = username;
-		this.passwd = passwd;
+		this.password = password;
 	}
 
 	public Cliente(int id, String nombre, String direccion) {
@@ -28,12 +28,12 @@ public class Cliente {
 		this.direccion = direccion;
 	}
 
-	public Cliente(int id, String nombre, String direccion, String username, String passwd) {
+	public Cliente(int id, String nombre, String direccion, String username, String password) {
 		this.id = id;
 		this.nombre = nombre;
 		this.direccion = direccion;
 		this.username = username;
-		this.passwd = passwd;
+		this.password = password;
 	}
 
 	public int getId() {
@@ -68,18 +68,18 @@ public class Cliente {
 		this.username = username;
 	}
 
-	public String getPasswd() {
-		return passwd;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setPasswd(String passwd) {
-		this.passwd = passwd;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	@Override
 	public String toString() {
 		return "Cliente [id=" + id + ", nombre=" + nombre + ", direccion=" + direccion + ", username=" + username
-				+ ", passwd=" + passwd + "]";
+				+ ", passwordd=" + password + "]";
 	}
 
 }

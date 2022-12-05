@@ -67,7 +67,7 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 			pstSelectPK.setInt(1, id);
 			ResultSet rs = pstSelectPK.executeQuery();
 			if (rs.next()) {
-				c = build(id, rs.getString("nombre"), rs.getString("direccion"), rs.getString("username"), rs.getString("passwd"));
+				c = build(id, rs.getString("nombre"), rs.getString("direccion"), rs.getString("username"), rs.getString("password"));
 			}
 			rs.close();
 			return c;
@@ -78,18 +78,8 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 	}
 	
 	public Cliente findByUserName(String username) {
-		Cliente c = null;
-		try {
-			pstSelectUserName.setString(1, username);
-			ResultSet rs = pstSelectUserName.executeQuery();
-			if (rs.next()) {
-				c = build(rs.getInt("id"), rs.getString("nombre"), rs.getString("direccion"), username, rs.getString("passwd"));
-			}
-			rs.close();
-			return c;
-		} catch (SQLException e) {
-			return null;
-		}
+		// Completar
+		return null;
 
 	}
 
@@ -99,7 +89,7 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 		try {
 			rs = pstSelectAll.executeQuery();
 			while (rs.next()) {
-				listaClientes.add(build(rs.getInt("id"), rs.getString("nombre"), rs.getString("direccion"), rs.getString("username"), rs.getString("passwd")));
+				listaClientes.add(build(rs.getInt("id"), rs.getString("nombre"), rs.getString("direccion"), rs.getString("username"), rs.getString("password")));
 			}
 			rs.close();
 			return listaClientes;
@@ -114,7 +104,7 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 			pstInsert.setString(1, cliInsertar.getNombre());
 			pstInsert.setString(2, cliInsertar.getDireccion());
 			pstInsert.setString(3, cliInsertar.getUsername());
-			pstInsert.setString(4, cliInsertar.getPasswd());
+			pstInsert.setString(4, cliInsertar.getPassword());
 			int insertados = pstInsert.executeUpdate();
 			if (insertados == 1) {
 				ResultSet rsClave = pstInsert.getGeneratedKeys();
@@ -134,7 +124,7 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 			pstUpdate.setString(1, cliActualizar.getNombre());
 			pstUpdate.setString(2, cliActualizar.getDireccion());
 			pstUpdate.setString(3, cliActualizar.getUsername());
-			pstUpdate.setString(4, cliActualizar.getPasswd());
+			pstUpdate.setString(4, cliActualizar.getPassword());
 			pstUpdate.setInt(5, cliActualizar.getId());
 			int actualizados = pstUpdate.executeUpdate();
 			return (actualizados == 1);
