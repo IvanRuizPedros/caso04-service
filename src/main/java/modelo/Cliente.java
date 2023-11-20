@@ -21,6 +21,12 @@ public class Cliente {
 		this.username = username;
 		this.password = password;
 	}
+	
+	public Cliente(String nombre, String direccion, String username) {
+		this.nombre = nombre;
+		this.direccion = direccion;
+		this.username = username;
+	}
 
 	public Cliente(int id, String nombre, String direccion) {
 		this.id = id;

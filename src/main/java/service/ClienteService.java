@@ -4,25 +4,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.ClienteDAO;
 import modelo.Cliente;
+import repository.ClienteRepository;
 
-/* Ejemplo de capa service del dominio del cliente (usuario). 
- * Requiere modificar la tabla clientes añadiendo
- * los campos username y password
- * alter table clientes
-		add column username varchar(20),
-		add column password char(40);
-	
-    update clientes 
-		set username = concat("usr", id),
-			password = sha1('1234');
- */
+// Logica de negocio relacionada con el cliente (casos de uso del cliente)
+
 public class ClienteService {
-	ClienteDAO cliDao;
+	ClienteRepository clienteRepository;
 
 	public ClienteService() throws SQLException {
-		cliDao = new ClienteDAO();
+		 clienteRepository = new ClienteRepository();
 
 	}
 
@@ -46,7 +37,7 @@ public class ClienteService {
 		
 	}
 
-	// Cambio de la contraseña del cliente (id o username)
+	// Cambio de la contraseña del cliente
 	public void cambiaContrasenya(int idCliente, String password) throws Exception {
 		
 	}
@@ -65,5 +56,14 @@ public class ClienteService {
 	public Cliente getCliente(int idCliente) throws Exception {
 		return null;
 	}
+	
+	// Otras necesidades de funcionalidad:
+	// Calcular total facturado por cliente.
+	
+	// Obtener listado de sus facturas. 
+	
+	// ...
+	
+	
 
 }

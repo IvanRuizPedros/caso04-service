@@ -1,24 +1,19 @@
 package dao;
-
 import java.util.List;
 
 public interface GenericDAO<T> {
-	T find(int id);
-    
-    List<T> findAll();   
-         
-    boolean insert(T t);
-     
-    boolean update(T t);
-    
-//    boolean save(T t);
-     
-    boolean delete(int id);
-    boolean delete(T t);
-    
-    int size();
-    
-//    boolean exists(int id);
-    List<T> findByExample(T t);    
-    
+	T find(int id) throws Exception;
+
+	List<T> findAll() throws Exception;
+
+	T insert(T t) throws Exception;
+
+	boolean update(T t) throws Exception;
+
+	boolean delete(T t) throws Exception;
+
+	long size() throws Exception;;
+
+	List<T> findByExample(T t) throws Exception;
 }
+
