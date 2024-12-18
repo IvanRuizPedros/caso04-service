@@ -1,19 +1,24 @@
 package dao;
+
 import java.util.List;
 
+import excepciones.DataAccessException;
+
+/*
+ * Versión DAO más orientada a excepciones
+ */
 public interface GenericDAO<T> {
-	T find(int id) throws Exception;
-
-	List<T> findAll() throws Exception;
-
-	T insert(T t) throws Exception;
-
-	boolean update(T t) throws Exception;
-
-	boolean delete(T t) throws Exception;
-
-	long size() throws Exception;;
-
-	List<T> findByExample(T t) throws Exception;
+	T find(int id) throws DataAccessException;    
+    List<T> findAll() throws DataAccessException; 
+    
+    void insert(T t) throws DataAccessException;     
+    void update(T t) throws DataAccessException;     
+    void delete(int id) throws DataAccessException;
+    void delete(T t) throws DataAccessException; 
+    
+    long size() throws DataAccessException; 
+    List<T> findByExample(T t) throws DataAccessException;
 }
+
+
 
