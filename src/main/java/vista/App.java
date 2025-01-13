@@ -31,11 +31,11 @@ public class App {
 		}
 
 		if (clienteServicio != null) {
-			ejemploLogin();
-			ejemploCambioContrasenya();
-			ejemploCambioPerfil();
+//			ejemploLogin();
+//			ejemploCambioContrasenya();
+//			ejemploCambioPerfil();
 			ejemploRegistro();
-			ejemploBusquedaPorNombre();
+//			ejemploBusquedaPorNombre();
 //			ejemploMostrarTotalFacturacion();
 		}
 
@@ -78,7 +78,7 @@ public class App {
 	private static void ejemploRegistro() {
 		try {
 			System.out.println("Registrando cliente...");
-			Cliente nuevoCliente = new Cliente("Insecticida", "C/ Mosca, 1", "ssii", "4321");
+			Cliente nuevoCliente = new Cliente("Insecticida fssd fsafsad fasdf sdaf sadf sdaffsad  safsdfasdfasd fsadf sdaf sad fsad fsadf asdfsadf sda", "C/ Mosca, 1", "ksdks1", "4321");
 			clienteServicio.registraCliente(nuevoCliente);
 			System.out.println("Cliente registrado satisfactoriamente..." + nuevoCliente);
 		} catch (ServiceException e) {

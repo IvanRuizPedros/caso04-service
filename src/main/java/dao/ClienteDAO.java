@@ -186,14 +186,12 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 
 	@Override
 	public long size() throws DataAccessException {
-		try {
-			ResultSet rs = pstSelectCount.executeQuery();
+		try (ResultSet rs = pstSelectCount.executeQuery()) {			
 			rs.next();
 			return rs.getLong(1);
 		} catch (SQLException e) {
 			throw new DataAccessException("Error al intentar leer total clientes: " + e.getMessage());
 		}
-
 	}
 
 	@Override

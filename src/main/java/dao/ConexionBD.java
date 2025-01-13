@@ -9,7 +9,7 @@ import excepciones.ConnectionException;
 
 public class ConexionBD {
 
-    private static final String JDBC_URL = "jdbc:mariadb://192.168.56.103/empresa";
+    private static final String JDBC_URL = "jdbc:mariadb://192.168.56.104/empresa";
 //    private static final String JDBC_URL = "jdbc:postgresql://192.168.56.103:5432/batoi?currentSchema=empresa";
     private static Connection con = null;    
 

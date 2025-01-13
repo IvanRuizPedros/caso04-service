@@ -16,8 +16,11 @@ public class ClienteService {
 	ClienteRepository clienteRepository;
 
 	public ClienteService() throws ServiceException {
-		clienteRepository = new ClienteRepository();
-
+		try {
+			clienteRepository = new ClienteRepository();
+		} catch (RepositoryException e) {
+			throw new ServiceException("Error en creación de service: " + e.getMessage());
+		}
 	}
 
 	// Comprobar si ya existe (username) con findByUserName
