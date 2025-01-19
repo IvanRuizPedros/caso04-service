@@ -24,7 +24,7 @@ public class LineaFacturaDAO {
 	private final PreparedStatement pstDeleteAllFactura;
 
 	public LineaFacturaDAO() throws DataAccessException {
-		Connection con = ConexionBD.getConnection();
+		Connection con = ConexionBD.getConexion();
 		try {
 			pstSelectFactura = con.prepareStatement(SQL_SELECT_FACTURA);
 			pstInsert = con.prepareStatement(SQL_INSERT);
