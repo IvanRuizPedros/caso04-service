@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ad.api.conexion.ConexionBD;
 import excepciones.DataAccessException;
 import modelo.LineaFactura;
 
@@ -24,7 +25,7 @@ public class LineaFacturaDAO {
 	private final PreparedStatement pstDeleteAllFactura;
 
 	public LineaFacturaDAO() throws DataAccessException {
-		Connection con = ConexionBD.getConexion();
+		Connection con = ConexionBD.getConnection();
 		try {
 			pstSelectFactura = con.prepareStatement(SQL_SELECT_FACTURA);
 			pstInsert = con.prepareStatement(SQL_INSERT);

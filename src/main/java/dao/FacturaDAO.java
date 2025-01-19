@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ad.api.conexion.ConexionBD;
 import excepciones.DataAccessException;
 import modelo.Cliente;
 import modelo.Factura;
@@ -15,7 +16,7 @@ import modelo.Factura;
 public class FacturaDAO implements GenericDAO<Factura>{
 	private static final String TABLA = "factura";
     private static final String PK = "id";
-    private static final int DEFAULT_PAGE_SIZE = 10;
+    private static final int DEFAULT_PAGE_SIZE = 100;
 
     private int pageSize = DEFAULT_PAGE_SIZE;
 
@@ -34,7 +35,7 @@ public class FacturaDAO implements GenericDAO<Factura>{
     private final PreparedStatement pstCount;
     
 	public FacturaDAO() throws DataAccessException {
-		Connection con = ConexionBD.getConexion();
+		Connection con = ConexionBD.getConnection();
 		try {
 			pstSelectAll = con.prepareStatement(SQL_SELECT_ALL);
             pstSelectById = con.prepareStatement(SQL_SELECT_BY_ID);
@@ -90,7 +91,20 @@ public class FacturaDAO implements GenericDAO<Factura>{
 	}
 	
 	public List<Factura> findAll(int pagina) throws DataAccessException {
-		return null;
+		List<Factura> facturas = new ArrayList<>();
+	    String sql = SQL_SELECT_ALL + " LIMIT ? OFFSET ?";
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql)) {
+	        pst.setInt(1, pageSize);
+	        pst.setInt(2, pageSize * (pagina - 1));
+	        ResultSet rs = pst.executeQuery();
+	        while (rs.next()) {
+	            facturas.add(build(rs));
+	        }
+	        rs.close();
+	    } catch (SQLException e) {
+	        throw new DataAccessException("Error obteniendo todas las facturas paginadas: " + e.getMessage());
+	    }
+	    return facturas;
 	}
 	
 	public List<Factura> findAll() throws DataAccessException {
@@ -109,11 +123,37 @@ public class FacturaDAO implements GenericDAO<Factura>{
 	}
 	
 	public List<Factura> findByCliente(int cli, int pagina) throws DataAccessException {
-		return null;
+		List<Factura> facturas = new ArrayList<>();
+	    String sql = SQL_SELECT_ALL + " WHERE cliente_id = ? LIMIT ? OFFSET ?";
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql)) {
+	        pst.setInt(1, cli);
+	        pst.setInt(2, pageSize);
+	        pst.setInt(3, pageSize * (pagina - 1));
+	        ResultSet rs = pst.executeQuery();
+	        while (rs.next()) {
+	            facturas.add(build(rs));
+	        }
+	        rs.close();
+	    } catch (SQLException e) {
+	        throw new DataAccessException("Error obteniendo facturas del cliente con paginación: " + e.getMessage());
+	    }
+	    return facturas;
 	}
 	
 	public List<Factura> findByCliente(int cli) throws DataAccessException {
-		return null;
+		List<Factura> facturas = new ArrayList<>();
+	    String sql = SQL_SELECT_ALL + " WHERE cliente_id = ?";
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql)) {
+	        pst.setInt(1, cli);
+	        ResultSet rs = pst.executeQuery();
+	        while (rs.next()) {
+	            facturas.add(build(rs));
+	        }
+	        rs.close();
+	    } catch (SQLException e) {
+	        throw new DataAccessException("Error obteniendo facturas del cliente: " + e.getMessage());
+	    }
+	    return facturas;
 	}
 	
 	public void insert(Factura facInsertar) throws DataAccessException {
@@ -180,26 +220,83 @@ public class FacturaDAO implements GenericDAO<Factura>{
 	}
 	
 	public List<Factura> findByExample(Factura muestra) throws DataAccessException {
-		return null;
+		List<Factura> facturas = new ArrayList<>();
+	    StringBuilder sql = new StringBuilder(SQL_SELECT_ALL + " WHERE 1=1");
+	    List<Object> params = new ArrayList<>();
+	    
+	    if (muestra.getFecha() != null) {
+	        sql.append(" AND fecha = ?");
+	        params.add(Date.valueOf(muestra.getFecha()));
+	    }
+	    if (muestra.getCliente() != null) {
+	        sql.append(" AND cliente_id = ?");
+	        params.add(muestra.getCliente().getId());
+	    }
+	    if (muestra.getVendedor() > 0) {
+	        sql.append(" AND vendedor = ?");
+	        params.add(muestra.getVendedor());
+	    }
+	    if (muestra.getFormaPago() != null) {
+	        sql.append(" AND formaPago = ?");
+	        params.add(muestra.getFormaPago());
+	    }
+
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql.toString())) {
+	        for (int i = 0; i < params.size(); i++) {
+	            pst.setObject(i + 1, params.get(i));
+	        }
+	        ResultSet rs = pst.executeQuery();
+	        while (rs.next()) {
+	            facturas.add(build(rs));
+	        }
+	        rs.close();
+	    } catch (SQLException e) {
+	        throw new DataAccessException("Error buscando facturas por ejemplo: " + e.getMessage());
+	    }
+	    return facturas;
 	}
 	
 	public double getImporteTotal(int factura) throws DataAccessException {
-		return 0;
+		String sql = "SELECT SUM(cantidad * precio_unitario) AS total FROM detalle_factura WHERE factura_id = ?";
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql)) {
+	        pst.setInt(1, factura);
+	        ResultSet rs = pst.executeQuery();
+	        if (rs.next()) {
+	            return rs.getDouble("total");
+	        }
+	        rs.close();
+	    } catch (SQLException e) {
+	        throw new DataAccessException("Error calculando el importe total de la factura: " + e.getMessage());
+	    }
+	    return 0;
 	}
 	
 	public int getPageSize() {
-		return 0;
+		return pageSize;
 	}
 	
 	public void setPageSize(int pageSize) {
-		
+		this.pageSize = pageSize;
 	}
 	
 	public long getNumPages() throws DataAccessException {
-		return 0;
+		long total = size();
+	    return (total + pageSize - 1) / pageSize;
 	}
 	
 	public float getTotalFacturadoByCliente(int clienteId) throws DataAccessException {
-		return 0;
+		String sql = "SELECT SUM(cantidad * precio_unitario) AS total FROM detalle_factura df "
+	               + "INNER JOIN factura f ON df.factura_id = f.id WHERE f.cliente_id = ?";
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql)) {
+	        pst.setInt(1, clienteId);
+	        ResultSet rs = pst.executeQuery();
+	        if (rs.next()) {
+	            return rs.getFloat("total");
+	        }
+	        rs.close();
+	    } catch (SQLException e) {
+	        throw new DataAccessException("Error obteniendo el total facturado por cliente: " + e.getMessage());
+	    }
+	    return 0;
 	}
 }

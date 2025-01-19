@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ad.api.conexion.ConexionBD;
 import excepciones.DataAccessException;
 import modelo.Cliente;
 
@@ -34,7 +35,7 @@ public class ClienteDAO implements GenericDAO<Cliente> {
 	private final PreparedStatement pstDelete;
 
 	public ClienteDAO() throws DataAccessException {
-		Connection con = ConexionBD.getConexion();
+		Connection con = ConexionBD.getConnection();
 		try {
 			pstSelectPK = con.prepareStatement(SQLSELECTPK);
 			pstSelectUsername = con.prepareStatement(SQL_SELECT_USERNAME);

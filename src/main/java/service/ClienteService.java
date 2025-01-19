@@ -120,6 +120,15 @@ public class ClienteService {
 		}
 	}
 
+	// Obtención facturación de un cliente
+	public float getFacturacionCliente(int idCliente) throws ServiceException {
+		try {
+			return clienteRepository.getFacturacion(idCliente);
+		} catch (RepositoryException e) {
+			throw new ServiceException("Error en capa service: " + e.getMessage());
+		}
+	}
+	
 	// Otras necesidades de funcionalidad:
 	// - Calcular total facturado por cliente.
 	// - Obtener  historial de compras (listado de sus facturas)

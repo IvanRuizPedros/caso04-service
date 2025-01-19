@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import dao.ClienteDAO;
+import dao.FacturaDAO;
 import excepciones.DataAccessException;
 import excepciones.RepositoryException;
 import modelo.Cliente;
@@ -14,10 +15,12 @@ import modelo.Cliente;
  */
 public class ClienteRepository {
 	ClienteDAO clienteDao;
+	FacturaDAO facturaDao;
 
 	public ClienteRepository() throws RepositoryException {
 		try {
 			clienteDao = new ClienteDAO();
+			facturaDao = new FacturaDAO();
 		} catch (DataAccessException e) {
 			throw new RepositoryException("Error preparando repository de clientes: " + e.getMessage());
 		}
@@ -75,7 +78,6 @@ public class ClienteRepository {
 		} catch (DataAccessException e) {
 			throw new RepositoryException("Error en repository clientes: " + e.getMessage());
 		}
-
 	}
 
 	public void delete(Cliente cliente) throws RepositoryException {
@@ -111,6 +113,20 @@ public class ClienteRepository {
 	public void close() throws SQLException {
 		try {
 			clienteDao.close();
+			facturaDao.close();
+		} catch (DataAccessException e) {
+			throw new RepositoryException("Error en repository clientes: " + e.getMessage());
+		}
+	}
+	
+	// Comprueba si el cliente existe. En ese caso, se llama el dao
+	// de facturas para obtener el calculo.
+	public float getFacturacion(int idCliente) throws RepositoryException {
+		try {
+			if (!this.exists(idCliente)) {
+				throw new RepositoryException("Cliente no existe");
+			}
+			return facturaDao.getTotalFacturadoByCliente(idCliente);
 		} catch (DataAccessException e) {
 			throw new RepositoryException("Error en repository clientes: " + e.getMessage());
 		}
