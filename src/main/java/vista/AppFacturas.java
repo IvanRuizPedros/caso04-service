@@ -1,13 +1,16 @@
 package vista;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import excepciones.ServiceException;
+import modelo.Articulo;
 import modelo.Cliente;
 import modelo.Factura;
-import modelo.LineaFactura;
+import modelo.Linfactura;
+import modelo.Vendedor;
 import service.ClienteService;
 import service.FacturaService;
 
@@ -20,7 +23,6 @@ public class AppFacturas {
 	}
 
 	private static void casosUsoFacturas() {
-		// ConexionBD.setIp("192.168.56.103");
 		try {
 			facturaServicio = new FacturaService();
 			clienteServicio = new ClienteService();
@@ -30,13 +32,13 @@ public class AppFacturas {
 
 		if (facturaServicio != null && clienteServicio != null) {
 			// casos
-			ejemploObtenerFacturas(); 	// Lista todas las facturas página a página.
-			ejemploObtenerFactura(); 	// Obtiene todos los datos de una factura a partir de un número.
+//			ejemploObtenerFacturas(); 	// Lista todas las facturas página a página.
+//			ejemploObtenerFactura(); 	// Obtiene todos los datos de una factura a partir de un número.
 
-			ejemploNuevaFactura(); 		// Nueva factura (cabecera y lineas). Transaccional.
-			ejemploEliminaFactura(); 	// Elimina factura y sus lineas. Transaccional.
-			
-			ejemploTotalFacturadoCliente();		// Calcula facturación de un cliente
+//			ejemploNuevaFactura(); 		// Nueva factura (cabecera y lineas). Transaccional.
+//			ejemploEliminaFactura(); 	// Elimina factura y sus lineas. Transaccional.
+//			
+//			ejemploTotalFacturadoCliente();		// Calcula facturación de un cliente
 
 		}
 	}
@@ -44,13 +46,16 @@ public class AppFacturas {
 	private static void ejemploObtenerFacturas() {
 		try {
 			List<Factura> lista;
-			for (int i = 1; i <= facturaServicio.obtenerNumPaginas(); i++) {
+			long totalPaginas = facturaServicio.obtenerNumPaginas();
+			System.out.println("Total paginas: " + totalPaginas);
+			for (int i = 1; i <= totalPaginas; i++) {
 				System.out.println("***** Página " + i + " *****");
-				lista = facturaServicio.obtenerFacturas(i);
+				lista = facturaServicio.obtenerFacturas(i);				
 				for (Factura factura : lista) {
-//					facturaServicio.cargarDatosFactura(factura);
-					System.out.println(factura);
-//					for (LineaFactura lin : factura.getLineas()) {
+					facturaServicio.cargarDatosFactura(factura);					
+					System.out.print(factura);
+					System.out.println("  ->" + factura.getCliente());
+//					for (Linfactura lin : factura.getLinfacturas()) {
 //						System.out.println("\t" + lin);
 //					}
 				}
@@ -66,7 +71,7 @@ public class AppFacturas {
 			factura = facturaServicio.obtenerFactura(4);
 			facturaServicio.cargarDatosFactura(factura);
 			System.out.println(factura);
-			for (LineaFactura lin : factura.getLineas()) {
+			for (Linfactura lin : factura.getLinfacturas()) {
 				System.out.println("\t" + lin);
 			}
 		} catch (ServiceException e) {
@@ -79,12 +84,13 @@ public class AppFacturas {
 		try {
 			System.out.println("Creando nueva factura");
 			Cliente cliente = clienteServicio.getCliente(1);
-			Factura factura = new Factura(LocalDate.now(), cliente, 1, "tarjeta");
-			List<LineaFactura> lineas = new ArrayList<LineaFactura>();
-			lineas.add(new LineaFactura(1, 10));
-			lineas.add(new LineaFactura(8, 20));
-			lineas.add(new LineaFactura(2, 12));
-			factura.setLineas(lineas);
+			
+			Factura factura = new Factura(LocalDate.now(), cliente, new Vendedor(1), "tarjeta");
+			Set<Linfactura> lineas = new HashSet<Linfactura>();
+			lineas.add(new Linfactura(new Articulo(1), 10));
+			lineas.add(new Linfactura(new Articulo(7), 20));
+			lineas.add(new Linfactura(new Articulo(2), 12));
+			factura.setLinfacturas(lineas);
 			facturaServicio.guardaFactura(factura);
 			System.out.println("Factura insertada correctamente: " + factura);
 		} catch (ServiceException e) {
@@ -95,7 +101,7 @@ public class AppFacturas {
 	private static void ejemploEliminaFactura() {
 		try {
 			System.out.println("Eliminando factura...");
-			Factura factura = facturaServicio.obtenerFactura(5000);
+			Factura factura = facturaServicio.obtenerFactura(5003);
 			facturaServicio.eliminaFactura(factura);
 			System.out.println("Factura eliminada correctamente");
 		} catch (ServiceException e) {
