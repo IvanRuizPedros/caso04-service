@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.ConexionBD;
 import excepciones.ServiceException;
 import modelo.Cliente;
 import modelo.Factura;
