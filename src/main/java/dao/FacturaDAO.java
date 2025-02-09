@@ -93,7 +93,7 @@ public class FacturaDAO implements GenericDAO<Factura>{
 	public List<Factura> findAll(int pagina) throws DataAccessException {
 		List<Factura> facturas = new ArrayList<>();
 	    String sql = SQL_SELECT_ALL + " LIMIT ? OFFSET ?";
-	    try (PreparedStatement pst = ConexionBD.getConnection().prepareStatement(sql)) {
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql)) {
 	        pst.setInt(1, pageSize);
 	        pst.setInt(2, pageSize * (pagina - 1));
 	        ResultSet rs = pst.executeQuery();
@@ -125,7 +125,7 @@ public class FacturaDAO implements GenericDAO<Factura>{
 	public List<Factura> findByCliente(int cli, int pagina) throws DataAccessException {
 		List<Factura> facturas = new ArrayList<>();
 	    String sql = SQL_SELECT_ALL + " WHERE cliente_id = ? LIMIT ? OFFSET ?";
-	    try (PreparedStatement pst = ConexionBD.getConnection().prepareStatement(sql)) {
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql)) {
 	        pst.setInt(1, cli);
 	        pst.setInt(2, pageSize);
 	        pst.setInt(3, pageSize * (pagina - 1));
@@ -143,7 +143,7 @@ public class FacturaDAO implements GenericDAO<Factura>{
 	public List<Factura> findByCliente(int cli) throws DataAccessException {
 		List<Factura> facturas = new ArrayList<>();
 	    String sql = SQL_SELECT_ALL + " WHERE cliente_id = ?";
-	    try (PreparedStatement pst = ConexionBD.getConnection().prepareStatement(sql)) {
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql)) {
 	        pst.setInt(1, cli);
 	        ResultSet rs = pst.executeQuery();
 	        while (rs.next()) {
@@ -241,7 +241,7 @@ public class FacturaDAO implements GenericDAO<Factura>{
 	        params.add(muestra.getFormaPago());
 	    }
 
-	    try (PreparedStatement pst = ConexionBD.getConnection().prepareStatement(sql.toString())) {
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql.toString())) {
 	        for (int i = 0; i < params.size(); i++) {
 	            pst.setObject(i + 1, params.get(i));
 	        }
@@ -258,7 +258,7 @@ public class FacturaDAO implements GenericDAO<Factura>{
 	
 	public double getImporteTotal(int factura) throws DataAccessException {
 		String sql = "SELECT SUM(cantidad * precio_unitario) AS total FROM detalle_factura WHERE factura_id = ?";
-	    try (PreparedStatement pst = ConexionBD.getConnection().prepareStatement(sql)) {
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql)) {
 	        pst.setInt(1, factura);
 	        ResultSet rs = pst.executeQuery();
 	        if (rs.next()) {
@@ -287,7 +287,7 @@ public class FacturaDAO implements GenericDAO<Factura>{
 	public float getTotalFacturadoByCliente(int clienteId) throws DataAccessException {
 		String sql = "SELECT SUM(cantidad * precio_unitario) AS total FROM detalle_factura df "
 	               + "INNER JOIN factura f ON df.factura_id = f.id WHERE f.cliente_id = ?";
-	    try (PreparedStatement pst = ConexionBD.getConnection().prepareStatement(sql)) {
+	    try (PreparedStatement pst = ConexionBD.getConexion().prepareStatement(sql)) {
 	        pst.setInt(1, clienteId);
 	        ResultSet rs = pst.executeQuery();
 	        if (rs.next()) {
